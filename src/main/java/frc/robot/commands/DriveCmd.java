@@ -28,17 +28,15 @@ public class DriveCmd extends Command {
 
 	@Override
 	protected void execute() {
-		double leftX = m_oi.getLeftX(0);
 		double leftY = m_oi.getLeftY(0);
 		double rightX = m_oi.getRightX(0);
 
 		if (m_oi.getRightTrigger(0) > 0) {
-			leftX *= 0.4;
 			leftY *= 0.4;
 			rightX *= 0.4;
 		}
 
-			m_drive.drive(leftX, leftY);
+		m_drive.drive(leftY, rightX);
 	}
 
 	@Override
