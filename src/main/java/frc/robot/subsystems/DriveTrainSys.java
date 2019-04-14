@@ -7,14 +7,13 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.SPI.Port;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 import com.kauailabs.navx.frc.AHRS;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-public class DriveTrainSys extends Subsystem {
+public class DriveTrainSys extends InjectedSubsystem {
 	private static final int frontLeftPort = 0;
 	private static final int frontRightPort = 1;
 
@@ -32,11 +31,6 @@ public class DriveTrainSys extends Subsystem {
 		frontRight.configFactoryDefault();
 
 		drive = new DifferentialDrive(frontLeft, frontRight);
-	}
-
-	@Override
-	protected void initDefaultCommand() {
-
 	}
 
 	public AHRS getAhrs() {
