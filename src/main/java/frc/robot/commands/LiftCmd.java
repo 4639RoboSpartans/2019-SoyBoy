@@ -6,20 +6,20 @@
 /*----------------------------------------------------------------------------*/
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 
-import frc.robot.OI;
 import frc.robot.subsystems.DriveTrainSys;
 
-public class DriveCmd extends Command {
+public class LiftCmd extends InstantCommand {
 
 	private final DriveTrainSys m_drive;
-	private final OI m_oi;
+	private final boolean front, on;
 
-	public DriveCmd(DriveTrainSys m_drive, OI m_oi) {
+	public LiftCmd(DriveTrainSys m_drive, boolean front, boolean on) {
 		this.m_drive = m_drive;
 		requires(m_drive);
-		this.m_oi = m_oi;
+		this.front = front;
+		this.on = on;
 	}
 
 	@Override
@@ -28,20 +28,12 @@ public class DriveCmd extends Command {
 
 	@Override
 	protected void execute() {
-		double leftY = m_oi.getLeftY(0);
-		double rightX = m_oi.getRightX(0);
-
-		if (m_oi.getRightTrigger(0) > 0) {
-			leftY *= 0.4;
-			rightX *= 0.4;
+		System.out.println(on);
+		if (front) {
+			m_drive.setFrontSolenoid(on);
+		} else {
+			m_drive.setRearSolenoid(on);
 		}
-
-		m_drive.drive(leftY, rightX);
-	}
-
-	@Override
-	protected boolean isFinished() {
-		return false;
 	}
 
 	@Override

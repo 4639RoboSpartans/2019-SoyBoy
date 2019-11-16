@@ -6,49 +6,45 @@
 /*----------------------------------------------------------------------------*/
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
 
-import frc.robot.OI;
 import frc.robot.subsystems.DriveTrainSys;
 
-public class DriveCmd extends Command {
+public class PIDAngleCmd extends Command {
+	private static final double P = 1.0 / 100.0, I = 0, D = 0;
 
 	private final DriveTrainSys m_drive;
-	private final OI m_oi;
+	private final PIDController pid;
 
-	public DriveCmd(DriveTrainSys m_drive, OI m_oi) {
+	public PIDAngleCmd(DriveTrainSys m_drive, double angle) {
 		this.m_drive = m_drive;
 		requires(m_drive);
-		this.m_oi = m_oi;
+		this.pid = new PIDController(P, I, D, m_drive.getAhrs(),
+				output -> m_drive.drive(0, output + 0.3 * Math.signum(output)));
+		this.pid.setInputRange(-180, 180);
+		this.pid.setAbsoluteTolerance(2);
+		this.pid.setContinuous(true);
+		this.pid.setSetpoint(angle);
 	}
 
 	@Override
 	protected void initialize() {
-	}
-
-	@Override
-	protected void execute() {
-		double leftY = m_oi.getLeftY(0);
-		double rightX = m_oi.getRightX(0);
-
-		if (m_oi.getRightTrigger(0) > 0) {
-			leftY *= 0.4;
-			rightX *= 0.4;
-		}
-
-		m_drive.drive(leftY, rightX);
-	}
-
-	@Override
-	protected boolean isFinished() {
-		return false;
+		this.pid.enable();
 	}
 
 	@Override
 	protected void end() {
+		this.pid.disable();
 	}
 
 	@Override
 	protected void interrupted() {
+		end();
+	}
+
+	@Override
+	protected boolean isFinished() {
+		return this.pid.onTarget() && Math.abs(this.m_drive.getAhrs().getRate()) < 0.5;
 	}
 }
